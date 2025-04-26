@@ -3,12 +3,13 @@ const { getTaskSummary } = require('../services/analytics.service');
 
 const createTask = async (req, res, next) => {
   try {
-    const { title, description, dueDate } = req.body;
+    const { title, description, dueDate, priority } = req.body;
     const task = await Task.create({
       user: req.user._id,
       title,
       description,
-      dueDate
+      dueDate,
+      priority
     });
     res.status(201).json(task);
   } catch (error) {
@@ -16,10 +17,34 @@ const createTask = async (req, res, next) => {
   }
 };
 
-const getTasks = async (req, res, next) => {
+const listTasks = async (req, res, next) => {
   try {
-    const tasks = await Task.find({ user: req.user._id }).sort({ createdAt: -1 });
+    const { sortBy, order } = req.query;
+
+    let sortOption = { createdAt: -1 };
+
+    if (sortBy === 'dueDate') {
+      sortOption = { dueDate: order === 'asc' ? 1 : -1 };
+    } else if (sortBy === 'priority') {
+      sortOption = { 
+        priority: order === 'asc' ? 1 : -1 
+      };
+    }
+
+    const tasks = await Task.find({ user: req.user._id }).sort(sortOption);
     res.json(tasks);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getTask = async (req, res, next) => {
+  try {
+    const task = await Task.findOne({ _id: req.params.id, user: req.user._id });
+    if (!task) {
+      return res.status(404).json({ message: 'Task not found' });
+    }
+    res.json(task);
   } catch (error) {
     next(error);
   }
@@ -30,11 +55,12 @@ const updateTask = async (req, res, next) => {
     const task = await Task.findOne({ _id: req.params.id, user: req.user._id });
     if (!task) return res.status(404).json({ message: 'Task not found' });
 
-    const { title, description, status, dueDate } = req.body;
+    const { title, description, status, dueDate, priority } = req.body;
     task.title = title || task.title;
     task.description = description || task.description;
     task.status = status || task.status;
     task.dueDate = dueDate || task.dueDate;
+    task.priority = priority || task.priority;
     await task.save();
 
     res.json(task);
@@ -64,4 +90,4 @@ const taskAnalytics = async (req, res, next) => {
   }
 };
 
-module.exports = { createTask, getTasks, updateTask, deleteTask, taskAnalytics };
+module.exports = { createTask, getTask, listTasks, updateTask, deleteTask, taskAnalytics };

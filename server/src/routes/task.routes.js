@@ -1,7 +1,8 @@
 const express = require('express');
 const {
   createTask,
-  getTasks,
+  getTask,
+  listTasks,
   updateTask,
   deleteTask,
   taskAnalytics
@@ -12,9 +13,10 @@ const router = express.Router();
 
 router.route('/')
   .post(protect, createTask)
-  .get(protect, getTasks);
+  .get(protect, listTasks);
 
 router.route('/:id')
+  .get(protect, getTask)
   .put(protect, updateTask)
   .delete(protect, deleteTask);
 
