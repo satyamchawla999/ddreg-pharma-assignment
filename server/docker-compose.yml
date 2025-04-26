@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo
+    container_name: mongo_container
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    restart: always
+
+  backend:
+    build: .
+    container_name: backend_container
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/taskmanager_db
+      - JWT_SECRET=secret
+      - NODE_ENV=development
+    depends_on:
+      - mongo
+    volumes:
+      - .:/app
+    restart: always
+
+volumes:
+  mongo_data:
