@@ -22,8 +22,8 @@ This is the backend server for the **Task Management App** built using Node.js, 
 
 1. **Clone the repository**
    ```bash
-   git clone <your-repo-link>
-   cd server
+   git clone https://github.com/satyamchawla999/ddreg-pharma-assignment
+   cd root-folder/server
    ```
 
 2. **Install dependencies**
@@ -57,8 +57,8 @@ This is the backend server for the **Task Management App** built using Node.js, 
 
 1. **Clone the repository**
    ```bash
-   git clone <your-repo-link>
-   cd root-folder
+   git clone https://github.com/satyamchawla999/ddreg-pharma-assignment
+   cd root-folder/server
    ```
 
 2. **Build and run containers**
